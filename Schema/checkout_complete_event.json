@@ -1,0 +1,110 @@
+{
+    "id": "http://json-schema.org/CheckoutCompletePageViewEvent",
+    "title": "CheckoutCompletePageViewEvent",
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "description": "Checkout Complete Page View Event",
+    "type": "object",
+    "x-api-name": "trackCheckoutComplete",
+    "x-api-event-type": "pv",
+    "x-api-description": "Track an checkout complete page view event querry to the RAT platform",
+    "properties": {
+        "siteSection": {
+            "key": "ssc",
+            "description": "RAT Site Section, key: `ssc`",
+            "type": "string"
+        },
+        "pageType": {
+            "key": "pgt",
+            "description": "RAT Page Type, key: `pgt`",
+            "type": "string",
+            "default": "cart_checkout"
+        },
+        "pageName": {
+            "key": "pgn",
+            "description": "RAT Page Name, key: `pgn`",
+            "type": "string",
+            "default": "checkout_complete"
+        },
+        "orderIdentifier": {
+            "key": "ratOrderId",
+            "description": "Order id used, key: `ratOrderId`",
+            "type": "string"
+        },
+        "checkout": {
+            "key": "chkout",
+            "description": "checkout confirmation page, key: `chkout`.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "productItems": {
+            "description": "Items at the checkout",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "title": "ProductItem",
+                "properties": {
+                    "id": {
+                        "key": "itemid",
+                        "description": "Item Id, key: `itemid`",
+                        "type": "string"
+                    },
+                    "price": {
+                        "key": "price",
+                        "description": "Item Price, key: `price`",
+                        "type": "number"
+                    },
+                    "tag": {
+                        "key": "itag",
+                        "description": "Item Tag, key: `itag`",
+                        "type": "string"
+                    },
+                    "genre": {
+                        "key": "igenre",
+                        "description": "Item Genre, key: `igenre`",
+                        "type": "string"
+                    },
+                    "count": {
+                        "key": "ni",
+                        "description": "Item Count, key: `ni`",
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "id",
+                    "price",
+                    "count"
+                ]
+            },
+            "minItems": 1
+        },
+        "checkoutConversion": {
+            "key": "cv",
+            "description": "conversion of the purchased items, key: `cv`",
+            "type": "object",
+            "title": "CheckoutConversion",
+            "properties": {
+                "currency": {
+                    "key": "purchase_gms",
+                    "description": "purchased price, key: `purchase_gms`",
+                    "type": "integer"
+                },
+                "item": {
+                    "key": "purchase_item",
+                    "description": "purchased item, key: `purchase_item`",
+                    "type": "integer"
+                },
+                "order": {
+                    "key": "purchase_order",
+                    "description": "purchased order, key: `purchase_order`",
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "currency",
+                "item",
+                "order"
+            ]
+        }
+    },
+    "required": ["productItems", "checkout", "pageName", "pageType", "siteSection", "checkoutConversion"]
+}

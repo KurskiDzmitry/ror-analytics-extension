@@ -1,0 +1,115 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "SearchPageViewEvent",
+    "type": "object",
+    "x-api-name": "trackSearch",
+    "x-api-event-type": "pv",
+    "x-api-description": "Track a search query result to the RAT platform",
+    "properties": {
+        "displayedItems": {
+            "key": "cp.hits",
+            "type": "integer",
+            "description": "Number of items displayed, key: `cp.hits`"
+        },
+        "filterCondition": {
+            "key": "oa",
+            "type": "string",
+            "enum": ["a", "o", "x"],
+            "description": "To determine the search conditions used, AND or OR or NO, valid values: [a,o,x], key: `oa`"
+        },
+        "gspRequestID": {
+            "key": "cp.gsp_reqid",
+            "type": "string",
+            "description": "GSP Request in custom parameter, key: `cp.gsp_reqid`"
+        },
+        "isFilterApplied": {
+            "key": "cp.fa",
+            "type": "integer",
+            "description": "Search filter applied or not, key: `cp.fa`"
+        },
+        "nonSearchCustomParameters": {
+            "key": "cp.keyname",
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Add the non search related custom parameter values needed to be present as part of custom parameters, key: `cp.keyname`"
+        },
+        "nonSearchParameters": {
+            "key": "keyname",
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Add the non search related values needed to be present as part of first level of parameters, key: `keyname`"
+        },
+        "productItems": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "key": "itemid",
+                        "description": "Item Id, key: `itemid`",
+                        "type": "string"
+                    },
+                    "price": {
+                        "key": "price",
+                        "description": "Item Price, key: `price`",
+                        "type": "number"
+                    },
+                    "tag": {
+                        "key": "itag",
+                        "description": "Item Tag, key: `itag`",
+                        "type": "string"
+                    },
+                    "genre": {
+                        "key": "igenre",
+                        "description": "Item Genre, key: `igenre`",
+                        "type": "string"
+                    }
+                },
+                "required": ["id", "price"]
+            },
+            "description": "Items for the search query"
+        },
+        "resultPageNumber": {
+            "key": "cp.rpgn",
+            "type": "integer",
+            "description": "Result Page Number, key: `cp.rpgn`"
+        },
+        "searchQuery": {
+            "type": "object",
+            "properties": {
+                "excludedKeyword": {
+                    "key": "esq",
+                    "type": ["string", "null"],
+                    "description": "The Excluded Query String in the Search Request: key: `esq`"
+                },
+                "queryKeyword": {
+                    "key": "sq",
+                    "type": "string",
+                    "description": "The search string being used for query, key: `sq`"
+                }
+            },
+            "required": ["queryKeyword"],
+            "description": "Search Query"
+        },
+        "sortOrder": {
+            "key": "cp.sort",
+            "type": ["integer", "null"],
+            "description": "Sort Type applied in custom parameter: 1: Recommended order 2: Lowest price first 3: Highest to lowest price 4: Newest 5: Oldest 6: Most liked, key: `cp.sort`"
+        },
+        "totalResults": {
+            "key": "cp.total_results",
+            "type": "integer",
+            "description": "Total Results received from search, key: `cp.total_results`"
+        }
+    },
+    "required": [
+        "displayedItems",
+        "filterCondition",
+        "gspRequestID",
+        "isFilterApplied",
+        "productItems",
+        "resultPageNumber",
+        "searchQuery",
+        "totalResults"
+    ]
+}
