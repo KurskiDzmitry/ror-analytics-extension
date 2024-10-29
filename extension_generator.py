@@ -129,19 +129,20 @@ def generate_extension_code(struct_name, product_items_properties, required_prop
         swift_type = get_swift_type(details, prop)
         camel_case_prop = to_camel_case(prop)
         is_optional = prop not in required_properties
-        array_properties.append((prop, camel_case_prop, swift_type, is_optional))
+        json_key = details.get("key", prop)
+        array_properties.append((json_key, camel_case_prop, swift_type, is_optional))
     
     array_initializations = "\n        ".join([f"var {camel_case_prop}s: [{swift_type}] = []" for _, camel_case_prop, swift_type, _ in array_properties])
     
     array_appends = []
-    for prop, camel_case_prop, swift_type, is_optional in array_properties:
+    for json_key, camel_case_prop, swift_type, is_optional in array_properties:
         if is_optional and swift_type == "String":
             array_appends.append(f"{camel_case_prop}s.append(item.{camel_case_prop} ?? \"\")")
         else:
             array_appends.append(f"{camel_case_prop}s.append(item.{camel_case_prop})")
     
     array_appends_str = "\n            ".join(array_appends)
-    dictionary_assignments = "\n            ".join([f'dictionary["{prop}"] = {camel_case_prop}s' for prop, camel_case_prop, _, _ in array_properties])
+    dictionary_assignments = "\n            ".join([f'dictionary["{json_key}"] = {camel_case_prop}s' for json_key, camel_case_prop, _, _ in array_properties])
     
     extension_code = rf"""
 extension {struct_name} {{
