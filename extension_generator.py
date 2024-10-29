@@ -1,5 +1,8 @@
 import json
 import os
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s 🤖 %(message)s', datefmt='%H:%M:%S')
 
 def to_camel_case(snake_str):
     components = snake_str.split('_')
@@ -256,12 +259,14 @@ def main():
     object_model_dir = os.path.join(source_dir, "ObjectModel")
     extension_dir = os.path.join(source_dir, "Extension")
     
+    logging.info("Ensuring source directories exist")
     # Ensure the source directories exist
     if not os.path.exists(object_model_dir):
         os.makedirs(object_model_dir)
     if not os.path.exists(extension_dir):
         os.makedirs(extension_dir)
     
+    logging.info("Listing JSON files in the schemas directory")
     json_files = list_json_files(schemas_dir)
     
     # Initialize the RoRAnalyticsExtension file with imports
@@ -275,13 +280,16 @@ def main():
         existing_content = file.read()
     
     for json_file in json_files:
+        logging.info(f"Processing JSON file: {json_file}")
         with open(os.path.join(schemas_dir, json_file), "r") as file:
             schema = json.load(file)
         
         # Generate nested structs
+        logging.info("Generating nested structs")
         nested_structs = generate_nested_structs(schema.get("properties", {}))
         
         # Generate main struct with nested structs
+        logging.info("Generating main struct")
         main_struct, struct_name = generate_struct(schema.get("title", "checkout_complete_pageview_event"), schema, nested_structs, is_main_struct=True)
         
         # Use the struct name for the output file
@@ -292,20 +300,24 @@ def main():
         required_properties = schema["properties"]["productItems"]["items"].get("required", [])
         
         # Generate extension code
+        logging.info("Generating extension code")
         extension_code = generate_extension_code(struct_name, product_items_properties, required_properties)
         
         # Combine main struct and extension code
         full_content = f"{main_struct}\n{extension_code}"
         
         # Write to file in ObjectModel directory
+        logging.info(f"Writing to file: {output_file}")
         write_to_file(object_model_dir, output_file, full_content)
         
         # Generate RoRAnalyticsExtension code
+        logging.info("Generating RoRAnalyticsExtension code")
         ror_analytics_extension_code = generate_ror_analytics_extension(schema, struct_name)
         
         # Check if the method already exists in the existing content
         if ror_analytics_extension_code.strip() not in existing_content:
             # Append RoRAnalyticsExtension to file
+            logging.info("Appending RoRAnalyticsExtension code to file")
             append_to_file(extension_dir, "RoRAnalyticsExtension.swift", ror_analytics_extension_code)
     
     # Ensure the extension block is closed only once
@@ -314,6 +326,7 @@ def main():
             file.write("}\n")
     
     # Generate PayloadValidator.swift file in Extension directory
+    logging.info("Generating PayloadValidator.swift file")
     generate_payload_validator(extension_dir)
 
 if __name__ == "__main__":
