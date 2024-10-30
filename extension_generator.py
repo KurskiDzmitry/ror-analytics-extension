@@ -46,7 +46,12 @@ def get_swift_type(details, prop_name):
         item_type = get_swift_type(details["items"], prop_name[:-1])
         return f"[{item_type}]"
     elif details["type"] == "object":
-        return details.get("title", to_pascal_case(prop_name))
+        if "properties" in details:
+            return details.get("title", to_pascal_case(prop_name))
+        else:
+            return "[String: Any]"
+    elif details["type"] == "string" and "enum" in details:
+        return to_pascal_case(prop_name)
     
     type_mapping = {
         "string": "String",
@@ -110,6 +115,11 @@ def generate_nested_structs(properties):
         elif details["type"] == "object":
             nested_struct, _ = generate_struct(details.get("title", prop), details, [])
             nested_structs.append((nested_struct, details.get("title", prop)))
+        elif details["type"] == "string" and "enum" in details:
+            enum_name = to_pascal_case(prop)
+            enum_cases = "\n".join([f"    case {to_camel_case(value)} = \"{value}\"" for value in details["enum"]])
+            enum_struct = f"public enum {enum_name}: String, Codable {{\n{enum_cases}\n}}"
+            nested_structs.append((enum_struct, enum_name))
     return nested_structs
 
 def indent(text, level):
@@ -132,7 +142,7 @@ def generate_extension_code(struct_name, product_items_properties, required_prop
         swift_type = get_swift_type(details, prop)
         camel_case_prop = to_camel_case(prop)
         is_optional = prop not in required_properties
-        json_key = details.get("key", prop)
+        json_key = details.get("key", prop)  # Use the property name as the default JSON key if not provided
         array_properties.append((json_key, camel_case_prop, swift_type, is_optional))
     
     array_initializations = "\n        ".join([f"var {camel_case_prop}s: [{swift_type}] = []" for _, camel_case_prop, swift_type, _ in array_properties])

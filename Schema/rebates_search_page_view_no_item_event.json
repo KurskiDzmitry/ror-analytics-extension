@@ -1,0 +1,135 @@
+{
+    "id": "http://json-schema.org/SearchPageviewEvent",
+    "title": "SearchRebatesPageViewEvent",
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "description": "Search Rebates Page View Event",
+    "type": "object",
+    "x-api-name": "trackSearchRebatesPageView",
+    "x-api-event-type": "pv",
+    "x-api-description": "Track a search rebates page view event to the RAT platform",
+    "properties": {
+        "siteSection": {
+            "key": "ssc",
+            "description": "RAT Site section, key: `ssc`, constant value `search`",
+            "type": "string",
+            "const": "search"
+        },
+        "pageType": {
+            "key": "pgt",
+            "description": "Page type for the search pageview, key: `pgt`, constant value `search`",
+            "type": "string",
+            "const": "search"
+        },
+        "pageName": {
+            "key": "pgn",
+            "description": "Page name for the search pageview, key: `pgn`, constant value `search`",
+            "type": "string",
+            "const": "search"
+        },
+        "searchQuery": {
+            "key": "sq",
+            "description": "Search Query",
+            "type": "object",
+            "title": "RebatesSearchQuery",
+            "properties": {
+                "queryKeyword": {
+                    "key": "sq",
+                    "description": "The search string being used for query, key: `sq`",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "queryKeyword"
+            ]
+        },
+        "productItems": {
+            "key": "productItems",
+            "description": "Items for the search query",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "title": "RebatesProductItem",
+                "properties": {
+                    "id": {
+                        "key": "itemid",
+                        "description": "Item Id, key: `itemid`",
+                        "type": "string"
+                    },
+                    "price": {
+                        "key": "price",
+                        "description": "Item price, key: `price`",
+                        "type": "number"
+                    }
+                },
+                "required": [
+                    "id",
+                    "price"
+                ]
+            },
+            "minItems": 1
+        },
+        "filterCondition": {
+            "key": "oa",
+            "description": "To determine the search conditions used, AND or OR or NO, valid values: [a,o,x], key: `oa` ",
+            "type": "string",
+            "enum": [ "a", "o", "x"]
+        },
+        "customParameters": {
+            "key": "cp",
+            "description": "Custom parameters to be added for search pageview, key: `cp`",
+            "type": "object",
+            "properties": {
+                "displayedItems": {
+                    "key": "hits",
+                    "description": "Number of items displayed, key: `hits`",
+                    "type": "integer"
+                },
+                "totalResults": {
+                    "key": "total_results",
+                    "description": "Total Results received from search, key: `total_results`",
+                    "type": "integer"
+                },
+                "sortOrder": {
+                    "key": "sory",
+                    "description": "Search results sort order valid values are 1 = Standard order, 2 = Lowest price first, 3 = Highest to lowest price, key: `sory`",
+                    "type": "integer"
+                },
+                "resultPageNumber": {
+                    "key": "rpgn",
+                    "description": "Result page number for pageview event, key: `rpgn`",
+                    "type": "integer"
+                },
+                "searchFilter": {
+                    "key": "fa",
+                    "description": "Search filter applied or not in the result page valid values are 0 = not applied or 1 = applied, key: `fa`",
+                    "type": "integer",
+                    "enum": [0, 1]
+                },
+                "gspRequestID": {
+                    "key": "gsp_reqid",
+                    "description": "GSP Request in custom parameter, key: `gsp_reqid`",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "displayedItems",
+                "totalResults",
+                "sortOrder",
+                "resultPageNumber",
+                "searchFilter",
+                "gspRequestID"
+            ]
+        },
+        "optionalCustomParameters": {
+            "key": "cp",
+            "description": "Add the optional values needed to be present as part of custom parameters, key: cp.`keyname`",
+            "type": "object"
+        },
+        "optionalParameters": {
+            "key": "keyname",
+            "description": "Add the optional values needed to be present as part of first level of parameters, `key: `keyname``",
+            "type": "object"
+        }
+    },
+    "required": ["siteSection", "pageType", "pageName", "searchQuery", "filterCondition", "customParameters", "productItems"]
+}
